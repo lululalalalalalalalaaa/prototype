@@ -1,0 +1,7 @@
+# ecosq.or.kr(에코스퀘어, KEITI 환경산업 포털) 톤의 블루 테마
+[theme]
+primaryColor = "#0E5AA7"             # 블루(버튼·위젯 강조색)
+backgroundColor = "#FFFFFF"          # 본문 배경
+secondaryBackgroundColor = "#EAF1F8" # 사이드바·입력창 배경(연한 블루그레이)
+textColor = "#1B2A3A"                # 본문 텍스트(짙은 블루그레이)
+font = "sans serif"

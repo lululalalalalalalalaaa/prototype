@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# 비밀 정보
+.env
+
+# 비공개 LCI DB 보고서 데이터 (원문 비공개)
+lci_reports.json
+
+# 업로드한 보고서 파일 (원문 비공개) — README만 추적
+reports_upload/*
+!reports_upload/README.md
+
+# 환경 / 캐시
+.venv/
+__pycache__/
