@@ -22,6 +22,21 @@ def _ms(a, b):
     return round((b - a) * 1000)
 
 
+def visible_others(others, scores, floor, ratio):
+    """LLM이 제시한 '다른 유사 후보(others)' 중 화면에 노출할 것만 거릅니다.
+
+    임계 = min(절대 floor, 최고 점수 × ratio). 짧은/제너럴 질의는 코사인이 전반적으로
+    낮아 절대 floor에 모두 걸리므로, 추천(최고 점수)에 견줘 비슷한 후보는 노출합니다
+    (추천은 floor와 무관하게 항상 표시되므로 일관). 임계는 floor 이하라 기존 동작은 비회귀.
+    """
+    if not others:
+        return []
+    top = max(scores.values(), default=0.0)
+    threshold = min(floor, top * ratio)
+    return [o for o in others
+            if scores.get(o.get("db_name", ""), 0.0) >= threshold]
+
+
 def search(reports, query):
     """검색을 실행하고 렌더링에 필요한 결과 dict를 반환합니다.
 

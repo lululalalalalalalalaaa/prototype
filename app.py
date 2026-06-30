@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from rag.config import get_settings
 from rag.generate import DETAIL_FIELDS
 from rag.pipeline import search as run_search
+from rag.pipeline import visible_others
 from rag.store import load_index
 
 # 서버 콘솔에 각 검색 단계(임베딩→하이브리드→리랭커→추천)의 타이밍·결과를 로깅합니다.
@@ -179,19 +180,17 @@ def render_search_result(result):
             snippet = evidence["text"].strip().replace("\n", " ")
             st.markdown(f"> {snippet[:300]}{'…' if len(snippet) > 300 else ''}")
 
-    # 다른 유사 후보: 유사도가 기준값(similarity_floor) 미만이면 노출하지 않고,
+    # 다른 유사 후보: 임계 min(floor, 최고점수×others_ratio) 미만이면 노출하지 않고,
     # 남는 후보가 없으면 "다른 유사 후보가 없습니다." 안내문을 표시합니다.
+    # (짧은/제너럴 질의는 코사인이 전반적으로 낮아도 추천에 견줘 비슷한 후보를 보여줌)
     others = data.get("others") or []
-    visible_others = [
-        o for o in others
-        if scores.get(o.get("db_name", ""), 0) >= settings.similarity_floor
-    ]
+    visible = visible_others(others, scores, settings.similarity_floor, settings.others_ratio)
     st.markdown("**■ 다른 유사 후보**")
-    if visible_others:
+    if visible:
         with st.container(border=True):
             st.markdown("\n".join(
                 f"- **{o.get('db_name', '')}** — {o.get('reason', '')}"
-                for o in visible_others
+                for o in visible
             ))
     else:
         st.info("다른 유사 후보가 없습니다.")

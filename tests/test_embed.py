@@ -40,8 +40,8 @@ def test_embed_text_single_chunk(fake_client):
 def test_embed_text_multi_chunk_path(fake_client, monkeypatch):
     # embed_max_tokens를 작게 만들어 다중 청크 경로 강제
     small = Settings(model="m", embedding_model="e", top_k=5,
-                     similarity_floor=0.4, embed_encoding="cl100k_base",
-                     embed_max_tokens=4)
+                     similarity_floor=0.4, others_ratio=0.85,
+                     embed_encoding="cl100k_base", embed_max_tokens=4)
     monkeypatch.setattr(embed_mod, "get_settings", lambda: small)
 
     # 모든 청크가 동일 벡터를 주면, 토큰수 가중치와 무관하게 평균도 그 벡터여야 함.

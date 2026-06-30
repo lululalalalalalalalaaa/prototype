@@ -4,7 +4,8 @@ rag:
   model: "gpt-5.4-nano"                      # 추천 문구·세부정보 요약 생성 모델
   embedding_model: "text-embedding-3-small"  # 유사도 검색 임베딩 모델
   top_k: 5                                   # LLM에 넘길 유사 후보 보고서 개수
-  similarity_floor: 0.40                     # '다른 유사 후보' 노출 최소 코사인 유사도
+  similarity_floor: 0.40                     # '다른 유사 후보' 노출 최소 코사인(절대 상한)
+  others_ratio: 0.85                         # others 노출 임계 = min(floor, 최고점수×ratio). 짧은 질의 보정
   embed_encoding: "cl100k_base"              # 임베딩 모델 토크나이저
   embed_max_tokens: 8000                     # 임베딩 1회 입력 최대 토큰(한도 8191에 여유)
   chunk_tokens: 400                          # 검색용 청크 1개의 최대 토큰(문단 윈도우)

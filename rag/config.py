@@ -27,6 +27,7 @@ class Settings:
     embedding_model: str
     top_k: int
     similarity_floor: float
+    others_ratio: float
     embed_encoding: str
     embed_max_tokens: int
     chunk_tokens: int = 400
@@ -48,6 +49,7 @@ def get_settings() -> Settings:
         embedding_model=rag["embedding_model"],
         top_k=rag["top_k"],
         similarity_floor=rag["similarity_floor"],
+        others_ratio=rag["others_ratio"],
         embed_encoding=rag["embed_encoding"],
         embed_max_tokens=rag["embed_max_tokens"],
         chunk_tokens=rag["chunk_tokens"],
