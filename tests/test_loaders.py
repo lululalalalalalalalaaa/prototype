@@ -4,7 +4,30 @@ import json
 import pytest
 
 from rag.config import SUPPORTED_EXTS, UPLOAD_DIR
-from rag.ingest.loaders import clean_db_name, parse_report_file
+from rag.ingest.loaders import clean_body_text, clean_db_name, parse_report_file
+
+
+# --- clean_body_text: HWP 폼 노이즈 정제(내용·수치 보존) ---
+def test_clean_drops_empty_checkbox_keeps_selected():
+    out = clean_body_text("□ 국가 LCI DB\n▣ 해외 LCI DB(Ecoinvent/Gabi)")
+    assert "국가 LCI DB" not in out                  # 미선택 옵션 제거
+    assert "해외 LCI DB(Ecoinvent/Gabi)" in out      # 선택 값 보존
+    assert "▣" not in out                            # 마커 제거
+
+
+def test_clean_strips_fill_marker_and_drops_lone_marker():
+    assert clean_body_text("▣ 1차") == "1차"
+    assert clean_body_text("● ") == ""               # 마커만 → 제거
+
+
+def test_clean_drops_formula_and_empty_parens():
+    assert clean_body_text("(수식)\n=\n( )\n실제 내용") == "실제 내용"
+
+
+def test_clean_preserves_numbers_and_short_tokens():
+    out = clean_body_text("디젤\nClimate change _Fossil 4.95E-02kg CO2 eq.\n1차")
+    assert "디젤" in out and "1차" in out
+    assert "4.95E-02kg CO2 eq." in out
 
 
 # --- clean_db_name: 일련번호 제거 / 글자에 붙은 숫자 보존 / 보고서 표기 제거 ---

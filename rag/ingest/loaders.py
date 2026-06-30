@@ -51,6 +51,40 @@ def clean_db_name(stem):
     return name or stem
 
 
+# --- 추출 본문 정제(HWP 폼 노이즈 제거) -------------------------------------
+# HWP 보고서는 폼 양식이라 체크박스·수식 자리표시자가 텍스트로 함께 추출된다.
+# 미선택 체크박스(□○)는 '고르지 않은 옵션'이라 검색 노이즈(잘못된 매칭 유발)이고,
+# 선택 체크박스(■▣●)는 '고른 값'이라 의미가 있다(마커만 떼고 보존).
+_EMPTY_BOX = "□○☐"          # 미선택(노이즈)
+_FILL_BOX = "■▣●◉☑✓◆"      # 선택(내용 보존)
+
+
+def clean_body_text(text):
+    """추출된 본문에서 HWP 폼 노이즈를 정리합니다(실제 내용·표·수치는 보존).
+
+    - 미선택 체크박스(□○)로 시작하는 줄: 제거(고르지 않은 옵션).
+    - 선택 체크박스(■▣●)로 시작: 마커만 떼고 선택된 값 보존.
+    - 단독 `(수식)`·빈 괄호·기호만 있는 줄: 제거.
+    표 수치·짧은 토큰(디젤·1차 등)은 건드리지 않는다.
+    """
+    kept = []
+    for ln in text.split("\n"):
+        s = ln.strip()
+        if not s:
+            kept.append("")
+            continue
+        if s[0] in _EMPTY_BOX:            # 미선택 옵션 → 제거
+            continue
+        if s[0] in _FILL_BOX:             # 선택 옵션 → 마커 제거, 값 보존
+            s = s[1:].strip()
+            if not s:
+                continue
+        if s == "(수식)" or s.strip("()=·•◦▶▷-– \t") == "":   # 빈 괄호/단독 기호 → 제거
+            continue
+        kept.append(s)
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip()
+
+
 # --- .hwp(한글, HWP 5.0) 본문 텍스트 추출 -----------------------------------
 # .hwp는 OLE 복합 파일이며, 본문은 BodyText/Section* 스트림에 들어 있습니다.
 # (FileHeader의 압축 플래그가 켜져 있으면 zlib raw-deflate로 압축되어 있음)
@@ -120,7 +154,7 @@ def extract_hwp_text(path):
             if is_compressed:
                 data = zlib.decompress(data, -15)
             texts.append(_hwp_section_text(data))
-        return "\n".join(t for t in texts if t.strip()).strip()
+        return clean_body_text("\n".join(t for t in texts if t.strip()))
     finally:
         ole.close()
 
