@@ -19,9 +19,11 @@ from rag.clients import get_client  # noqa: E402
 from rag.config import INDEX_DIR, SUPPORTED_EXTS, UPLOAD_DIR  # noqa: E402
 from rag.embed import embed_texts  # noqa: E402
 from rag.generate import summarize_detail  # noqa: E402
-from rag.ingest.chunk import build_chunk_input, chunk_body  # noqa: E402
+from rag.ingest.chunk import build_chunk_input, structure_chunks  # noqa: E402
+from rag.ingest.images import count_image_hashes, image_chunks  # noqa: E402
 from rag.ingest.loaders import parse_report_file  # noqa: E402
 from rag.store import body_hash, load_index, save_index  # noqa: E402
+from rag.usage import UsageTracker  # noqa: E402
 
 
 def build(upload_dir=UPLOAD_DIR, index_dir=INDEX_DIR, client=None):
@@ -36,6 +38,10 @@ def build(upload_dir=UPLOAD_DIR, index_dir=INDEX_DIR, client=None):
         p for p in Path(upload_dir).iterdir()
         if p.is_file() and p.suffix.lower() in SUPPORTED_EXTS and p.stem.lower() != "readme"
     )
+
+    usage = UsageTracker()
+    hwp_files = [p for p in files if p.suffix.lower() == ".hwp"]
+    common_hashes = count_image_hashes(hwp_files)   # 로고·공통 템플릿 식별(빈도)
 
     reports, errors = [], []
     seen, reused, embedded = set(), 0, 0
@@ -58,11 +64,14 @@ def build(upload_dir=UPLOAD_DIR, index_dir=INDEX_DIR, client=None):
                 reused += 1
                 continue
             try:
-                texts = chunk_body(rec["body"])
-                inputs = [build_chunk_input(rec["db_name"], t) for t in texts]
+                chunks = structure_chunks(rec["body"])
+                if p.suffix.lower() == ".hwp":   # 공정흐름도 등 이미지를 vision 설명 청크로
+                    chunks += image_chunks(client, p, common_hashes, usage=usage)
+                inputs = [build_chunk_input(rec["db_name"], c) for c in chunks]
                 embeddings = embed_texts(client, inputs)
-                rec["chunks"] = [{"text": t, "embedding": e}
-                                 for t, e in zip(texts, embeddings)]
+                rec["chunks"] = [{"text": c["text"], "embedding": e,
+                                  "section": c["section"], "kind": c["kind"]}
+                                 for c, e in zip(chunks, embeddings)]
                 if not rec["chunks"]:
                     raise ValueError("청크가 생성되지 않았습니다(본문 비어있음).")
                 # 세부정보 5항목을 빌드 시점에 1회 precompute(질의 시점 LLM 호출 제거)
@@ -75,6 +84,8 @@ def build(upload_dir=UPLOAD_DIR, index_dir=INDEX_DIR, client=None):
     save_index(reports, index_dir)
     print(f"인덱스 빌드 완료 → {index_dir}")
     print(f"  문서 {len(reports)} (재사용 {reused} / 신규 임베딩 {embedded}) | 실패 {len(errors)}")
+    if usage.total_tokens():
+        print(f"  이미지 vision: {usage.total_tokens()} 토큰 · ${usage.cost_usd():.4f}")
     for e in errors:
         print("  -", e)
 

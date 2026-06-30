@@ -33,14 +33,16 @@ def best_chunk(query_embedding, report):
     """
     chunks = report.get("chunks", [])
     n = len(chunks)
-    sims = [(cosine_similarity(query_embedding, c["embedding"]), i, c.get("text"))
+    sims = [(cosine_similarity(query_embedding, c["embedding"]), i, c)
             for i, c in enumerate(chunks) if c.get("embedding")]
     if not sims:
-        return {"score": 0.0, "text": None, "chunk_index": 0, "n_chunks": n, "position_pct": 0}
-    score, idx, text = max(sims, key=lambda x: x[0])
-    return {"score": round(score, 3), "text": text,
+        return {"score": 0.0, "text": None, "chunk_index": 0, "n_chunks": n,
+                "position_pct": 0, "section": "", "kind": ""}
+    score, idx, c = max(sims, key=lambda x: x[0])
+    return {"score": round(score, 3), "text": c.get("text"),
             "chunk_index": idx + 1, "n_chunks": n,
-            "position_pct": round(idx / n * 100) if n else 0}
+            "position_pct": round(idx / n * 100) if n else 0,
+            "section": c.get("section", ""), "kind": c.get("kind", "body")}
 
 
 def rank(query_embedding, reports, top_k=None):

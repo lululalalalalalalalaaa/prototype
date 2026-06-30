@@ -9,6 +9,7 @@ PRICES = {
     "text-embedding-3-small": {"input": 0.02, "output": 0.0},
     "text-embedding-3-large": {"input": 0.13, "output": 0.0},
     "gpt-5.4-nano": {"input": 0.05, "output": 0.40},
+    "gpt-5.4": {"input": 1.25, "output": 10.0},   # 이미지 vision용(추정치 — 실제 단가로 조정)
 }
 
 

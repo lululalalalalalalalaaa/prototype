@@ -1,6 +1,6 @@
 """청킹 검증 — 문단 기반 토큰 윈도우(크기 한도·경계 보존·오버랩·분할). API 불필요."""
 from rag.embed import get_encoder
-from rag.ingest.chunk import build_chunk_input, chunk_body
+from rag.ingest.chunk import build_chunk_input, chunk_body, structure_chunks
 
 enc = get_encoder("cl100k_base")
 
@@ -9,8 +9,36 @@ def _ntok(text):
     return len(enc.encode(text))
 
 
-def test_build_chunk_input_prefixes_name():
-    assert build_chunk_input("철강", "본문 내용") == "철강\n본문 내용"
+def test_build_chunk_input_prefixes_name_and_section():
+    c = {"text": "본문 내용", "section": "영향평가 결과", "kind": "table"}
+    assert build_chunk_input("철강", c) == "철강 | 영향평가 결과\n본문 내용"
+
+
+def test_build_chunk_input_no_section():
+    c = {"text": "본문 내용", "section": "", "kind": "body"}
+    assert build_chunk_input("철강", c) == "철강\n본문 내용"
+
+
+# --- structure_chunks: 섹션 경계 분할 + 표 분리 + 섹션/kind 메타 ---
+def test_structure_chunks_splits_sections_and_tables():
+    body = ("1. 제품 개요\n무궁화호 디젤기차\n"
+            "2. 시스템 경계\ngate to gate 수송\n"
+            "표. 영향평가 결과(요약)\nClimate change 4.95E-02 kg CO2 eq")
+    chunks = structure_chunks(body, max_tokens=1000, overlap=0)
+    by_section = {c["section"]: c for c in chunks}
+    assert "제품 개요" in by_section
+    assert "시스템 경계" in by_section
+    # 표는 캡션을 섹션명으로, kind='table'
+    tbl = next(c for c in chunks if c["kind"] == "table")
+    assert "영향평가 결과" in tbl["section"]
+    assert "4.95E-02" in tbl["text"]
+    assert by_section["제품 개요"]["kind"] == "body"
+
+
+def test_structure_chunks_no_headers_single_segment():
+    chunks = structure_chunks("헤더 없는 일반 본문입니다", max_tokens=1000, overlap=0)
+    assert len(chunks) == 1
+    assert chunks[0]["section"] == "" and chunks[0]["kind"] == "body"
 
 
 def test_empty_body_returns_empty():

@@ -2,6 +2,7 @@
 # 코드에 모델명·임계치를 하드코딩하지 않습니다. 이 파일이 source of truth.
 rag:
   model: "gpt-5.4-nano"                      # 추천 문구·세부정보 요약 생성 모델
+  vision_model: "gpt-5.4"                     # 이미지(공정흐름도) 설명 생성 — 한국어 다이어그램용(detail:original)
   embedding_model: "text-embedding-3-small"  # 유사도 검색 임베딩 모델
   top_k: 5                                   # LLM에 넘길 유사 후보 보고서 개수
   similarity_floor: 0.40                     # '다른 유사 후보' 노출 최소 코사인(절대 상한)

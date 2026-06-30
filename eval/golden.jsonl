@@ -91,3 +91,15 @@
 {"query": "농업용수 관개 데이터", "expected_db_names": [], "difficulty": "hard", "match": "all"}
 {"query": "빗물 이용수 시스템 배출", "expected_db_names": [], "difficulty": "hard", "match": "all"}
 {"query": "해수 담수화 식수 생산", "expected_db_names": [], "difficulty": "hard", "match": "all"}
+{"query": "경유 LPG 천연가스 전력 네 가지를 연료로 쓰는 평균 버스", "expected_db_names": ["버스 수송, 평균"], "difficulty": "medium", "match": "all"}
+{"query": "휘발유 경유 LPG 전력으로 움직이는 평균 승용차", "expected_db_names": ["승용차 수송, 평균"], "difficulty": "medium", "match": "all"}
+{"query": "관광이나 대절용으로 빌리는 버스", "expected_db_names": ["전세버스 수송"], "difficulty": "medium", "match": "all"}
+{"query": "도시 안에서 정류장마다 서는 노선버스", "expected_db_names": ["시내버스 수송"], "difficulty": "medium", "match": "all"}
+{"query": "고속도로로 도시 간 이동하는 버스", "expected_db_names": ["시외버스 수송"], "difficulty": "medium", "match": "all"}
+{"query": "1 m3를 만드는 데 드는 목재 가공 자재", "expected_db_names": ["중밀도 섬유판(MDF)"], "difficulty": "medium", "match": "all"}
+{"query": "이온을 제거한 초순수 물", "expected_db_names": ["탈이온수 LCI DB 모듈 순수"], "difficulty": "medium", "match": "all"}
+{"query": "거름종이로 거른 정수", "expected_db_names": ["여과수 LCI DB 모듈 여과수"], "difficulty": "medium", "match": "all"}
+{"query": "전기로 달리는 고속 여객 열차", "expected_db_names": ["여객수송용 고속전기기차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "수도권 가정에서 쓰는 수돗물", "expected_db_names": ["생활용수(수도권)"], "difficulty": "medium", "match": "all"}
+{"query": "택시로 승객을 수송할 때 배출", "expected_db_names": ["택시 수송"], "difficulty": "easy", "match": "all"}
+{"query": "휘발유로 달리는 승용차 온실가스", "expected_db_names": ["휘발유 승용차 수송"], "difficulty": "easy", "match": "all"}

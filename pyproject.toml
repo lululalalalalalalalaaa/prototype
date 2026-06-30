@@ -8,6 +8,7 @@ dependencies = [
     "numpy>=2.5.0",
     "olefile>=0.47",
     "openai>=2.44.0",
+    "pillow>=12.2.0",
     "python-dotenv>=1.2.2",
     "pyyaml>=6.0",
     "streamlit>=1.58.0",

@@ -24,6 +24,7 @@ SUPPORTED_EXTS = {".hwp", ".txt", ".md", ".csv", ".json"}
 @dataclass(frozen=True)
 class Settings:
     model: str
+    vision_model: str
     embedding_model: str
     top_k: int
     similarity_floor: float
@@ -46,6 +47,7 @@ def get_settings() -> Settings:
     rag = data["rag"]
     return Settings(
         model=rag["model"],
+        vision_model=rag["vision_model"],
         embedding_model=rag["embedding_model"],
         top_k=rag["top_k"],
         similarity_floor=rag["similarity_floor"],

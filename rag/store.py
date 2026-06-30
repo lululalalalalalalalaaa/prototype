@@ -51,7 +51,8 @@ def save_index(reports, index_dir=INDEX_DIR):
             "metadata": r.get("metadata"),  # 세부정보 5항목(빌드 시점 precompute) 또는 None
         })
         for chunk_id, c in enumerate(r["chunks"]):
-            chunk_rows.append({"doc_id": doc_id, "chunk_id": chunk_id, "text": c["text"]})
+            chunk_rows.append({"doc_id": doc_id, "chunk_id": chunk_id, "text": c["text"],
+                               "section": c.get("section", ""), "kind": c.get("kind", "body")})
             embeddings.append(c["embedding"])
 
     _write_jsonl(index_dir / DOCS_FILE, doc_rows)
@@ -79,5 +80,6 @@ def load_index(index_dir=INDEX_DIR):
     for row, c in enumerate(_read_jsonl(index_dir / CHUNKS_FILE)):
         docs[c["doc_id"]]["chunks"].append({
             "text": c["text"], "embedding": emb[row].tolist(),
+            "section": c.get("section", ""), "kind": c.get("kind", "body"),
         })
     return [docs[i] for i in order]
