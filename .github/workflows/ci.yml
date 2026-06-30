@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Install uv (+ Python 3.14)
-        uses: astral-sh/setup-uv@v8
+        uses: astral-sh/setup-uv@v8.2.0
         with:
           enable-cache: true
       # reports_upload/(.hwp)는 비공개라 git에 없음 → 데이터 의존 테스트는 자동 skip.
