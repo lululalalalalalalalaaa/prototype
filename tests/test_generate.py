@@ -44,6 +44,7 @@ def test_recommend_prompt_invariants(fake_client):
     assert "원문을 그대로 인용/복사하지 마세요" in system
     assert '"no_match"' in system
     assert "대체하지 말고 no_match" in system   # near-domain 거부(그라운딩 강화)
+    assert "직접 해당하는" in system            # 일반 질의도 후보 있으면 추천(과잉기권 방지)
     assert "검색어" in user
 
 
