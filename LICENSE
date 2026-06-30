@@ -1,0 +1,16 @@
+Copyright (c) 한국환경산업기술원 (Korea Environmental Industry & Technology Institute, KEITI)
+
+All rights reserved.
+
+이 저장소에 포함된 국가 LCI(전과정 목록분석) DB 보고서와 그로부터 생성된 인덱스
+아티팩트(`index/` 등)의 저작권은 **한국환경산업기술원(KEITI)**에 있습니다.
+KEITI의 사전 서면 동의 없이 복제·배포·전송·상업적 이용을 할 수 없습니다.
+
+The national Life Cycle Inventory (LCI) database reports and the index
+artifacts derived from them (e.g. `index/`) contained in this repository are
+the property of the **Korea Environmental Industry & Technology Institute
+(KEITI)**. They may not be reproduced, redistributed, transmitted, or used
+commercially without KEITI's prior written consent.
+
+본 저장소는 위 데이터를 검색·요약하기 위한 연구·시연용 소프트웨어를 포함합니다.
+데이터에 대한 모든 권리는 KEITI에 유보됩니다.
