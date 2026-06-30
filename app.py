@@ -43,10 +43,18 @@ st.markdown(
       .lci-header p  { color:#E3EEF8; margin:8px 0 0; font-size:14.5px; }
       /* 결과 카드 강조용 테두리 */
       div[data-testid="stVerticalBlockBorderWrapper"] {
-        border-color:#C5DBF0 !important;
+        border-color:#C5DBF0 !important; border-radius:12px !important;
       }
       /* 본문 헤더 색을 블루로 */
       h2, h3 { color:#0E5AA7; }
+      /* 근거(출처) 발췌 — 좌측 강조선 + 옅은 배경 */
+      blockquote {
+        border-left:3px solid #2E86C1; background:#F4F9FD;
+        padding:8px 14px !important; border-radius:0 8px 8px 0;
+        color:#37474F; font-size:13.5px;
+      }
+      /* 추천 카드의 ■ 라벨을 블루로 */
+      [data-testid="stMarkdownContainer"] strong { color:#0B4F8A; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -94,6 +102,9 @@ with st.form("search_form"):
         placeholder="예) 디젤 기차로 화물을 수송할 때 온실가스 배출 데이터가 필요해",
     )
     search = st.form_submit_button("검색하기", type="primary")
+
+st.caption(f"현재 {len(st.session_state.reports)}개 국가 LCI DB가 색인되어 있습니다. "
+           "수송수단·연료·용수 종류·지역 등 자연어로 입력하세요.")
 
 
 # ---------------------------------------------------------------------------
@@ -156,7 +167,11 @@ def render_search_result(result):
         st.write(result.get("raw", ""))  # JSON 파싱 실패 시 원문 표시
         return
     if data.get("no_match"):
-        st.warning("검색어에 충분히 부합하는 국가 LCI DB가 없습니다.")
+        st.warning(
+            "검색어에 충분히 부합하는 국가 LCI DB가 없습니다.\n\n"
+            "이 코퍼스는 **수송(승용차·버스·기차·택시)·용수(공업/생활/여과/탈이온)·MDF** 중심입니다. "
+            "다른 주제(항공·철강·발전 등)는 데이터에 없을 수 있어요. 표현을 바꿔 다시 검색해 보세요."
+        )
         return
 
     rec = data.get("recommended") or {}
