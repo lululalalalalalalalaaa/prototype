@@ -55,6 +55,7 @@
     "pycache",
     "pyproject",
     "pytest",
+    "pytestmark",
     "pythonpath",
     "pyyaml",
     "rerank",
