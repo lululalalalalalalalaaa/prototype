@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv (+ Python 3.14)
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # reports_upload/(.hwp)는 비공개라 git에 없음 → 데이터 의존 테스트는 자동 skip.
+      # OPENAI_API_KEY도 불필요(단위 테스트는 FakeClient mock).
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Run tests
+        run: uv run pytest -q
+
+  spellcheck:
+    name: spellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: cSpell
+        run: npx --yes cspell@latest "**/*.{py,md,yaml,toml,json,jsonl}" --no-progress

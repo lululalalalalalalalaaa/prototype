@@ -1,6 +1,7 @@
 """이미지 추출·평탄화·dedup 검증 — 실제 HWP 사용, vision은 mock(API 불필요)."""
 import io
 
+import pytest
 from PIL import Image
 
 from rag.config import UPLOAD_DIR
@@ -8,6 +9,8 @@ from rag.ingest.images import (count_image_hashes, extract_image_blobs,
                                flatten_to_png, image_chunks, image_sha)
 
 _HWPS = sorted(p for p in UPLOAD_DIR.glob("*.hwp"))
+# reports_upload/는 gitignore라 CI 등 데이터 없는 환경에선 이 파일 전체를 건너뛴다.
+pytestmark = pytest.mark.skipif(not _HWPS, reason="reports_upload/에 .hwp 파일 없음")
 
 
 def test_extract_image_blobs_real_hwp():
