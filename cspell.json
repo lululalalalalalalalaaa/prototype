@@ -62,6 +62,7 @@
     "rrf",
     "savez",
     "segs",
+    "skipif",
     "streamlit",
     "testpaths",
     "tbuf",

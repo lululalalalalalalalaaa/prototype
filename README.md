@@ -1,5 +1,6 @@
 # 국가 LCI DB 검색 (RAG)
 
+[![CI](https://github.com/lululalalalalalalalaaa/prototype/actions/workflows/ci.yml/badge.svg)](https://github.com/lululalalalalalalalaaa/prototype/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.58.0-FF4B4B?logo=streamlit&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-2.44.0-412991?logo=openai&logoColor=white)
@@ -137,7 +138,9 @@ uv run pytest          # 전체 (API 키 불필요 — mock 클라이언트)
 ```
 
 각 단계(로더·청킹·임베딩·검색·BM25·리랭커·저장·빌드)가 단독 단위 테스트로 검증됩니다.
-실제 `.hwp` 파일에 대한 회귀 테스트도 포함됩니다.
+실제 `.hwp` 파일에 대한 회귀 테스트도 포함됩니다(비공개 `reports_upload/`가 없는 환경에선 자동 skip).
+
+**CI**: `.github/workflows/ci.yml`이 push·PR마다 `pytest`(API 키 불필요)와 `cspell`을 실행합니다.
 
 ## 프로젝트 구조
 
