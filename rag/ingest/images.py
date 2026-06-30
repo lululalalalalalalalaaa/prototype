@@ -18,7 +18,6 @@ from rag.config import get_settings
 
 _PNG = b"\x89PNG"
 _BMP = b"BM"
-_COMMON_MAX = 3  # 해시가 이 수보다 많은 문서에 나오면 로고·공통 템플릿으로 보고 제외
 
 
 def extract_image_blobs(hwp_path):
@@ -100,10 +99,11 @@ def image_chunks(client, hwp_path, common_hashes, usage=None):
 
     반환: [{"text", "section": "공정흐름도", "kind": "image"}]. 로고·공통 템플릿은 제외.
     """
+    common_max = get_settings().image_common_max
     chunks, seen = [], set()
     for _, data in extract_image_blobs(hwp_path):
         h = image_sha(data)
-        if h in seen or common_hashes.get(h, 0) > _COMMON_MAX:
+        if h in seen or common_hashes.get(h, 0) > common_max:
             continue
         seen.add(h)
         desc = describe_image(client, data, usage=usage)

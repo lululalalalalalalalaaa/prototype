@@ -3,7 +3,7 @@
 모델명·임계치는 코드에 하드코딩하지 않고 rules.yaml에서만 가져옵니다.
 경로 상수(저장 파일·업로드 폴더)는 값이 아니라 위치이므로 코드가 소유합니다.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 
@@ -37,6 +37,9 @@ class Settings:
     bm25_k1: float = 1.5
     bm25_b: float = 0.75
     rerank_pool: int = 15
+    rerank_snippet: int = 120
+    image_common_max: int = 3
+    prices: dict = field(default_factory=dict)
 
 
 @lru_cache(maxsize=1)
@@ -60,4 +63,7 @@ def get_settings() -> Settings:
         bm25_k1=rag["bm25_k1"],
         bm25_b=rag["bm25_b"],
         rerank_pool=rag["rerank_pool"],
+        rerank_snippet=rag["rerank_snippet"],
+        image_common_max=rag["image_common_max"],
+        prices=rag["prices"],
     )

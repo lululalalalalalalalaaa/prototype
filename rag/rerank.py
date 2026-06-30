@@ -10,13 +10,11 @@ import json
 
 from rag.config import get_settings
 
-_SNIPPET = 120  # 후보별 본문 발췌 길이(토큰 절감)
-
-
 def _build_candidates_text(candidates):
+    snippet_len = get_settings().rerank_snippet
     lines = []
     for i, (_, report) in enumerate(candidates):
-        snippet = report["body"].replace("\n", " ")[:_SNIPPET]
+        snippet = report["body"].replace("\n", " ")[:snippet_len]
         lines.append(f"[{i}] {report['db_name']} — {snippet}")
     return "\n".join(lines)
 

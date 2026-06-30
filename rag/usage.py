@@ -4,13 +4,9 @@
 RAG의 운영 관측성(비용 추적)을 위한 모듈.
 """
 
-# 모델별 단가 (USD per 1M tokens). ⚠️ 실제 청구 단가에 맞춰 조정하세요(추정치 포함).
-PRICES = {
-    "text-embedding-3-small": {"input": 0.02, "output": 0.0},
-    "text-embedding-3-large": {"input": 0.13, "output": 0.0},
-    "gpt-5.4-nano": {"input": 0.05, "output": 0.40},
-    "gpt-5.4": {"input": 1.25, "output": 10.0},   # 이미지 vision용(추정치 — 실제 단가로 조정)
-}
+from rag.config import get_settings
+
+# 모델별 단가(USD per 1M tokens)는 config/rules.yaml의 `prices`가 단일 소스다.
 
 
 class UsageTracker:
@@ -32,9 +28,10 @@ class UsageTracker:
         return sum(i + o for _, _, i, o in self.calls)
 
     def cost_usd(self):
+        prices = get_settings().prices
         total = 0.0
         for _, model, i, o in self.calls:
-            p = PRICES.get(model, {"input": 0.0, "output": 0.0})
+            p = prices.get(model, {"input": 0.0, "output": 0.0})
             total += i / 1e6 * p["input"] + o / 1e6 * p["output"]
         return total
 

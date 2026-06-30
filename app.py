@@ -249,7 +249,7 @@ def render_trace(trace):
             st.markdown("\n".join(
                 f"  - {u['label']} ({u['model']}): 입력 {u['in']} · 출력 {u['out']} 토큰"
                 for u in usage))
-            st.caption(f"합계 {tok} 토큰 · 추정 ${cost:.5f}  (단가: rag/usage.py PRICES — 실제 단가로 조정)")
+            st.caption(f"합계 {tok} 토큰 · 추정 ${cost:.5f}  (단가: config/rules.yaml prices — 실제 단가로 조정)")
 
 
 # 저장된 검색 결과 표시

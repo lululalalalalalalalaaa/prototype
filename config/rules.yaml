@@ -3,7 +3,7 @@
 rag:
   model: "gpt-5.4-nano"                      # 추천 문구·세부정보 요약 생성 모델
   vision_model: "gpt-5.4"                     # 이미지(공정흐름도) 설명 생성 — 한국어 다이어그램용(detail:original)
-  embedding_model: "text-embedding-3-small"  # 유사도 검색 임베딩 모델
+  embedding_model: "text-embedding-3-small"  # 유사도 검색 임베딩 모델 (large A/B 측정: 검색↑이나 그라운딩 0.989→0.956로 small 유지)
   top_k: 5                                   # LLM에 넘길 유사 후보 보고서 개수
   similarity_floor: 0.40                     # '다른 유사 후보' 노출 최소 코사인(절대 상한)
   others_ratio: 0.85                         # others 노출 임계 = min(floor, 최고점수×ratio). 짧은 질의 보정
@@ -15,3 +15,10 @@ rag:
   bm25_k1: 1.5                               # BM25 용어 빈도 포화 파라미터
   bm25_b: 0.75                               # BM25 문서 길이 정규화 파라미터
   rerank_pool: 15                            # LLM 리랭크에 넘길 hybrid 후보 수
+  rerank_snippet: 120                        # 리랭커에 넘길 후보별 본문 발췌 길이(자)
+  image_common_max: 3                        # 이미지 해시가 이 수 초과 문서에 공통이면 로고/템플릿으로 제외
+  prices:                                    # 모델별 단가 USD per 1M tokens (실제 청구 단가로 조정)
+    text-embedding-3-small: {input: 0.02, output: 0.0}
+    text-embedding-3-large: {input: 0.13, output: 0.0}
+    gpt-5.4-nano: {input: 0.05, output: 0.40}
+    gpt-5.4: {input: 1.25, output: 10.0}
