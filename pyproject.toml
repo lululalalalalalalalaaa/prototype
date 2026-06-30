@@ -5,9 +5,20 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "numpy>=2.5.0",
     "olefile>=0.47",
     "openai>=2.44.0",
     "python-dotenv>=1.2.2",
+    "pyyaml>=6.0",
     "streamlit>=1.58.0",
     "tiktoken>=0.13.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

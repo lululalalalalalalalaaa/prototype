@@ -1,0 +1,93 @@
+{"query": "경유 승용차 수송 배출 계수", "expected_db_names": ["경유 승용차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "전기 승용차로 이동할 때 배출 인벤토리", "expected_db_names": ["전기 승용차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "휘발유 승용차 수송 데이터", "expected_db_names": ["휘발유 승용차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "LPG 승용차 수송 인벤토리", "expected_db_names": ["LPG 승용차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "택시 타고 이동할 때의 배출", "expected_db_names": ["택시 수송"], "difficulty": "easy", "match": "all"}
+{"query": "시내버스 수송 인벤토리 데이터", "expected_db_names": ["시내버스 수송"], "difficulty": "easy", "match": "all"}
+{"query": "시외버스로 도시 간 이동 배출", "expected_db_names": ["시외버스 수송"], "difficulty": "easy", "match": "all"}
+{"query": "전세버스 단체 이동 수송", "expected_db_names": ["전세버스 수송"], "difficulty": "easy", "match": "all"}
+{"query": "고속전기기차로 여객을 수송할 때 배출", "expected_db_names": ["여객수송용 고속전기기차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "여객수송용 디젤기차 수송", "expected_db_names": ["여객수송용 디젤기차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "디젤 기차로 화물을 수송하는 데이터", "expected_db_names": ["화물수송용 디젤기차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "전기 기차로 화물 수송", "expected_db_names": ["화물수송용 전기기차 수송"], "difficulty": "easy", "match": "all"}
+{"query": "중밀도 섬유판 MDF 목재 보드", "expected_db_names": ["중밀도 섬유판(MDF)"], "difficulty": "easy", "match": "all"}
+{"query": "제주 지역 생활용수", "expected_db_names": ["생활용수(제주권)"], "difficulty": "easy", "match": "all"}
+{"query": "강원도 생활용수", "expected_db_names": ["생활용수(강원권)"], "difficulty": "easy", "match": "all"}
+{"query": "전라남도 지역 생활용수", "expected_db_names": ["생활용수(전남권)"], "difficulty": "easy", "match": "all"}
+{"query": "전라북도 생활용수", "expected_db_names": ["생활용수(전북권)"], "difficulty": "easy", "match": "all"}
+{"query": "경상북도 가정용 물 사용", "expected_db_names": ["생활용수(경북권)"], "difficulty": "easy", "match": "all"}
+{"query": "수도권 가정 생활용수", "expected_db_names": ["생활용수(수도권)"], "difficulty": "easy", "match": "all"}
+{"query": "전국 평균 생활용수", "expected_db_names": ["생활용수(평균)"], "difficulty": "easy", "match": "all"}
+{"query": "승용차 수송 평균 데이터", "expected_db_names": ["승용차 수송, 평균"], "difficulty": "easy", "match": "all"}
+{"query": "버스 수송 전체 평균", "expected_db_names": ["버스 수송, 평균"], "difficulty": "easy", "match": "all"}
+{"query": "배터리로 가는 자동차의 탄소 배출", "expected_db_names": ["전기 승용차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "가솔린 승용차 온실가스", "expected_db_names": ["휘발유 승용차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "디젤 승용차 배출", "expected_db_names": ["경유 승용차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "액화석유가스로 가는 승용차", "expected_db_names": ["LPG 승용차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "기름 넣고 달리는 승용차 배출", "expected_db_names": ["휘발유 승용차 수송", "경유 승용차 수송"], "difficulty": "medium", "match": "any"}
+{"query": "관광 갈 때 빌리는 버스 수송", "expected_db_names": ["전세버스 수송"], "difficulty": "medium", "match": "all"}
+{"query": "전세 대절 버스 이동", "expected_db_names": ["전세버스 수송"], "difficulty": "medium", "match": "all"}
+{"query": "KTX 같은 빠른 전기 열차 여객", "expected_db_names": ["여객수송용 고속전기기차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "도시 사이를 오가는 고속버스", "expected_db_names": ["시외버스 수송"], "difficulty": "medium", "match": "all"}
+{"query": "출퇴근 대중교통 버스", "expected_db_names": ["시내버스 수송", "버스 수송, 평균"], "difficulty": "medium", "match": "any"}
+{"query": "필터로 거른 여과수 물 데이터", "expected_db_names": ["여과수 LCI DB 모듈 여과수"], "difficulty": "medium", "match": "all"}
+{"query": "이온을 제거한 순수한 정제수", "expected_db_names": ["탈이온수 LCI DB 모듈 순수"], "difficulty": "medium", "match": "all"}
+{"query": "합판 대신 쓰는 섬유판 자재", "expected_db_names": ["중밀도 섬유판(MDF)"], "difficulty": "medium", "match": "all"}
+{"query": "1 m³ 단위로 생산되는 목재 자재", "expected_db_names": ["중밀도 섬유판(MDF)"], "difficulty": "medium", "match": "all"}
+{"query": "연료 미상, 기차로 화물 수송 일반 데이터", "expected_db_names": ["화물수송용 기차 수송(평균)"], "difficulty": "medium", "match": "all"}
+{"query": "여객을 기차로 수송하는 평균값", "expected_db_names": ["여객수송용 기차 수송 (평균)"], "difficulty": "medium", "match": "all"}
+{"query": "수도권 공업용수 데이터", "expected_db_names": ["공업용수(수도권) LCI DB 모듈 공업용수, 수도권"], "difficulty": "medium", "match": "all"}
+{"query": "경남 지역 산업용수", "expected_db_names": ["공업용수(경남권) LCI DB 모듈 공업용수, 경남권"], "difficulty": "medium", "match": "all"}
+{"query": "공업용수 전국 평균값", "expected_db_names": ["공업용수(평균) LCI DB 모듈 공업용수, production mix"], "difficulty": "medium", "match": "all"}
+{"query": "경상남도 가정 물 사용", "expected_db_names": ["생활용수(경남권)"], "difficulty": "medium", "match": "all"}
+{"query": "충청북도 생활용수", "expected_db_names": ["생활용수(충북권)"], "difficulty": "medium", "match": "all"}
+{"query": "충청남도 생활용수", "expected_db_names": ["생활용수(충남권)"], "difficulty": "medium", "match": "all"}
+{"query": "전라남도 산업용 물", "expected_db_names": ["공업용수(전남권) LCI DB 모듈 공업용수, 전남권"], "difficulty": "medium", "match": "all"}
+{"query": "전라북도 공업용수", "expected_db_names": ["공업용수(전북권) LCI DB 모듈 공업용수, 전북권"], "difficulty": "medium", "match": "all"}
+{"query": "경상북도 산업용수", "expected_db_names": ["공업용수(경북권) LCI DB 모듈 공업용수, 경북권"], "difficulty": "medium", "match": "all"}
+{"query": "순수 제조용으로 정제한 물", "expected_db_names": ["탈이온수 LCI DB 모듈 순수"], "difficulty": "medium", "match": "all"}
+{"query": "디젤로 달리는 여객 열차 배출", "expected_db_names": ["여객수송용 디젤기차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "전기로 가는 화물 열차 온실가스", "expected_db_names": ["화물수송용 전기기차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "person·km 기준 여객 기차 평균", "expected_db_names": ["여객수송용 기차 수송 (평균)"], "difficulty": "medium", "match": "all"}
+{"query": "화물 기차 평균 수송", "expected_db_names": ["화물수송용 기차 수송(평균)"], "difficulty": "medium", "match": "all"}
+{"query": "시내 노선버스 대중교통", "expected_db_names": ["시내버스 수송"], "difficulty": "medium", "match": "all"}
+{"query": "제주 가정에서 쓰는 수돗물", "expected_db_names": ["생활용수(제주권)"], "difficulty": "medium", "match": "all"}
+{"query": "강원권 가정용수", "expected_db_names": ["생활용수(강원권)"], "difficulty": "medium", "match": "all"}
+{"query": "전기차 승용 이동", "expected_db_names": ["전기 승용차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "고속철도 여객 수송", "expected_db_names": ["여객수송용 고속전기기차 수송"], "difficulty": "medium", "match": "all"}
+{"query": "공장에서 쓰는 물 전국 평균", "expected_db_names": ["공업용수(평균) LCI DB 모듈 공업용수, production mix"], "difficulty": "medium", "match": "all"}
+{"query": "초순수 탈이온 처리수", "expected_db_names": ["탈이온수 LCI DB 모듈 순수"], "difficulty": "hard", "match": "all"}
+{"query": "거름 처리한 공업 원수", "expected_db_names": ["여과수 LCI DB 모듈 여과수"], "difficulty": "hard", "match": "all"}
+{"query": "디젤로 사람을 실어 나르는 기차", "expected_db_names": ["여객수송용 디젤기차 수송"], "difficulty": "hard", "match": "all"}
+{"query": "전기 기차로 사람을 수송", "expected_db_names": ["여객수송용 고속전기기차 수송"], "difficulty": "hard", "match": "all"}
+{"query": "충청남도 지역 공업용수", "expected_db_names": ["공업용수(충남권) LCI DB 모듈 공업용수, 충남권 (정밀검토)"], "difficulty": "hard", "match": "all"}
+{"query": "충청북도 공장 용수", "expected_db_names": ["공업용수(충북권) LCI DB 모듈 공업용수, 충북권"], "difficulty": "hard", "match": "all"}
+{"query": "수도권 공장에서 쓰는 물", "expected_db_names": ["공업용수(수도권) LCI DB 모듈 공업용수, 수도권"], "difficulty": "hard", "match": "all"}
+{"query": "전북 공장에서 쓰는 물", "expected_db_names": ["공업용수(전북권) LCI DB 모듈 공업용수, 전북권"], "difficulty": "hard", "match": "all"}
+{"query": "경기도 서울 지역 생활용수", "expected_db_names": ["생활용수(수도권)"], "difficulty": "hard", "match": "all"}
+{"query": "충청 지역 공업용수", "expected_db_names": ["공업용수(충남권) LCI DB 모듈 공업용수, 충남권 (정밀검토)", "공업용수(충북권) LCI DB 모듈 공업용수, 충북권"], "difficulty": "hard", "match": "any"}
+{"query": "영남 지역 공업용수", "expected_db_names": ["공업용수(경남권) LCI DB 모듈 공업용수, 경남권", "공업용수(경북권) LCI DB 모듈 공업용수, 경북권"], "difficulty": "hard", "match": "any"}
+{"query": "호남 지역 생활용수", "expected_db_names": ["생활용수(전남권)", "생활용수(전북권)"], "difficulty": "hard", "match": "any"}
+{"query": "수도권 물 사용 인벤토리", "expected_db_names": ["생활용수(수도권)", "공업용수(수도권) LCI DB 모듈 공업용수, 수도권"], "difficulty": "hard", "match": "any"}
+{"query": "충북 가정에서 쓰는 물", "expected_db_names": ["생활용수(충북권)"], "difficulty": "hard", "match": "all"}
+{"query": "경남 가정 생활용수", "expected_db_names": ["생활용수(경남권)"], "difficulty": "hard", "match": "all"}
+{"query": "장거리 고속 시외 버스 이동", "expected_db_names": ["시외버스 수송"], "difficulty": "hard", "match": "all"}
+{"query": "버스 중 가장 일반적인 평균 데이터", "expected_db_names": ["버스 수송, 평균"], "difficulty": "hard", "match": "all"}
+{"query": "디젤 화물 열차 온실가스", "expected_db_names": ["화물수송용 디젤기차 수송"], "difficulty": "hard", "match": "all"}
+{"query": "평균적인 승용차 1km 이동 배출", "expected_db_names": ["승용차 수송, 평균"], "difficulty": "hard", "match": "all"}
+{"query": "전남 가정용 물", "expected_db_names": ["생활용수(전남권)"], "difficulty": "hard", "match": "all"}
+{"query": "비행기 항공 여객 수송 배출", "expected_db_names": [], "difficulty": "easy", "match": "all"}
+{"query": "선박 해상 화물 운송 데이터", "expected_db_names": [], "difficulty": "easy", "match": "all"}
+{"query": "자전거로 이동할 때 배출", "expected_db_names": [], "difficulty": "medium", "match": "all"}
+{"query": "철강 제조 공정 온실가스", "expected_db_names": [], "difficulty": "easy", "match": "all"}
+{"query": "시멘트 클링커 생산 배출", "expected_db_names": [], "difficulty": "easy", "match": "all"}
+{"query": "화력 발전소 전력 생산 탄소", "expected_db_names": [], "difficulty": "medium", "match": "all"}
+{"query": "커피 원두 재배 탄소 발자국", "expected_db_names": [], "difficulty": "easy", "match": "all"}
+{"query": "플라스틱 페트병 생산 인벤토리", "expected_db_names": [], "difficulty": "easy", "match": "all"}
+{"query": "지하철 도시철도로 이동", "expected_db_names": [], "difficulty": "hard", "match": "all"}
+{"query": "오토바이 이륜차로 이동 배출", "expected_db_names": [], "difficulty": "hard", "match": "all"}
+{"query": "수소 연료전지 승용차 수송", "expected_db_names": [], "difficulty": "hard", "match": "all"}
+{"query": "화물 자동차 트럭으로 화물 수송", "expected_db_names": [], "difficulty": "hard", "match": "all"}
+{"query": "농업용수 관개 데이터", "expected_db_names": [], "difficulty": "hard", "match": "all"}
+{"query": "빗물 이용수 시스템 배출", "expected_db_names": [], "difficulty": "hard", "match": "all"}
+{"query": "해수 담수화 식수 생산", "expected_db_names": [], "difficulty": "hard", "match": "all"}

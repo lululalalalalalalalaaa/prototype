@@ -1,0 +1,15 @@
+# 국가 LCI DB 검색 — RAG 설정 (단일 소스)
+# 코드에 모델명·임계치를 하드코딩하지 않습니다. 이 파일이 source of truth.
+rag:
+  model: "gpt-5.4-nano"                      # 추천 문구·세부정보 요약 생성 모델
+  embedding_model: "text-embedding-3-small"  # 유사도 검색 임베딩 모델
+  top_k: 5                                   # LLM에 넘길 유사 후보 보고서 개수
+  similarity_floor: 0.40                     # '다른 유사 후보' 노출 최소 코사인 유사도
+  embed_encoding: "cl100k_base"              # 임베딩 모델 토크나이저
+  embed_max_tokens: 8000                     # 임베딩 1회 입력 최대 토큰(한도 8191에 여유)
+  chunk_tokens: 400                          # 검색용 청크 1개의 최대 토큰(문단 윈도우)
+  chunk_overlap: 80                          # 인접 청크 간 겹치는 토큰 수
+  rrf_k: 60                                  # RRF 융합 상수(Dense+BM25 순위 결합)
+  bm25_k1: 1.5                               # BM25 용어 빈도 포화 파라미터
+  bm25_b: 0.75                               # BM25 문서 길이 정규화 파라미터
+  rerank_pool: 15                            # LLM 리랭크에 넘길 hybrid 후보 수

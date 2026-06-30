@@ -9,7 +9,9 @@ wheels/
 # 비밀 정보
 .env
 
-# 비공개 LCI DB 보고서 데이터 (원문 비공개)
+# 불변 인덱스 아티팩트(index/)는 GitHub 배포를 위해 커밋합니다(데이터 소유자 공개 결정).
+#   docs.jsonl/chunks.jsonl/embeddings.npz — Streamlit Cloud 등에서 바로 로드.
+# (구) 단일 JSON 저장 — 사용 종료
 lci_reports.json
 
 # 업로드한 보고서 파일 (원문 비공개) — README만 추적
@@ -19,3 +21,10 @@ reports_upload/*
 # 환경 / 캐시
 .venv/
 __pycache__/
+.pytest_cache/
+.DS_Store
+
+# eval 캐시(질의 임베딩 / rerank / answer 결과)
+eval/.query_cache.json
+eval/.rerank_cache.json
+eval/.answer_cache.json
