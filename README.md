@@ -1,5 +1,18 @@
 # 국가 LCI DB 검색 (RAG)
 
+![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.58.0-FF4B4B?logo=streamlit&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-2.44.0-412991?logo=openai&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-2.5.0-013243?logo=numpy&logoColor=white)
+![tiktoken](https://img.shields.io/badge/tiktoken-0.13.0-000000)
+![uv](https://img.shields.io/badge/uv-managed-DE5FE9?logo=uv&logoColor=white)
+![tests](https://img.shields.io/badge/tests-128_passed-0A9EDC?logo=pytest&logoColor=white)
+
+![LLM](https://img.shields.io/badge/LLM-gpt--5.4--nano-10A37F?logo=openai&logoColor=white)
+![Embedding](https://img.shields.io/badge/embedding-text--embedding--3--small-10A37F?logo=openai&logoColor=white)
+![Retrieval](https://img.shields.io/badge/retrieval-Dense%2BBM25%20RRF%20%E2%86%92%20LLM%20rerank-0E5AA7)
+![MRR](https://img.shields.io/badge/rerank%20MRR-0.962-success)
+
 자연어로 질문하면 가장 적합한 **국가 LCI(전과정 목록분석) DB**를 추천하는 검색 시스템입니다.
 사용자가 "전기차로 사람을 수송할 때 온실가스 배출 데이터"처럼 입력하면, 임베딩·BM25·LLM
 리랭커를 거쳐 가장 알맞은 LCI DB를 근거와 함께 제시하고, 보고서 세부정보(기능단위·시스템경계·
@@ -14,7 +27,7 @@
 
 - **검색 품질을 수치로 검증** — 골든셋(93문항) + `eval/run_eval.py`로 각 단계의 기여를 측정(아래 표).
 - **하이브리드 + 리랭커** — Dense(임베딩) + BM25(정확 토큰)를 RRF로 융합하고, LLM이 관련도로 재정렬.
-- **출처(provenance) + 토큰/비용 계측** — 추천 근거가 된 본문 청크를 인용 표시하고, 검색당 단계별 토큰·USD 비용을 집계.
+- **출처(provenance) + 토큰/비용 계측** — 추천 근거가 된 본문 청크를 **위치(본문 N/M번째 청크)와 함께** 인용 표시하고, 검색당 단계별 토큰·USD 비용을 집계.
 - **단계별 로깅(관측성)** — 검색마다 임베딩→하이브리드→리랭커→추천의 입출력·타이밍을 서버 콘솔 + 인앱 패널에 노출.
 - **build/serve 분리** — 임베딩 비용은 오프라인 빌드 1회. 서빙은 읽기 전용 → 동시성 안전.
 - **의존성 최소** — BM25·코사인은 순수 파이썬(외부 벡터DB·torch 없음). Python 3.14 + numpy(저장)/openai/streamlit.
@@ -132,10 +145,10 @@ rag/
   config·clients         설정 로더 / OpenAI 클라이언트 단일 생성 지점
   ingest/loaders·chunk   파일 파싱(HWP 포함) / 문단 토큰 윈도우 청킹
   embed·store            임베딩 / 인덱스 아티팩트 저장·로드
-  retrieve               코사인 + BM25(순수 파이썬) + hybrid_rank(RRF) + best_chunk(출처)
+  retrieve               코사인 + BM25(순수 파이썬) + hybrid_rank(RRF) + best_chunk(출처·위치)
   rerank·generate        LLM 리랭커 / 추천·세부정보
   usage                  토큰/비용 계측(UsageTracker, 모델별 단가)
-  pipeline               search() = hybrid → rerank → recommend + trace(출처·토큰·타이밍)
+  pipeline               search() = hybrid → rerank → recommend + trace + visible_others(상대 임계)
 eval/                    golden.jsonl + run_eval.py (dense|hybrid|rerank|answer)
 tests/                   단계별 단위 테스트
 app.py                   얇은 Streamlit UI (읽기 전용) + 출처/토큰/로깅 표시
@@ -147,5 +160,8 @@ app.py                   얇은 Streamlit UI (읽기 전용) + 출처/토큰/로
 - **순수 파이썬 BM25/코사인** — 검색 연산은 numpy 없이 손구현(규모가 커지면 numpy 벡터화 고려). numpy는 npz 저장에만 사용.
 - **한글 BM25 토크나이저** — 음절 bigram(예: '경남'↔'경남권')+영숫자 토큰(MDF·LPG). 형태소 분석기 불필요.
 - **macOS HWP 파일명**은 NFD라 NFC 정규화 후 처리(`clean_db_name`).
+- **'다른 유사 후보' 노출(상대 임계)** — 임계 `min(similarity_floor 0.40, 최고점수×others_ratio 0.85)`
+  (`pipeline.visible_others`). 짧은/제너럴 질의는 코사인이 전반적으로 낮아도 추천에 견줘 비슷한 후보를 노출(`config/rules.yaml`).
+- **Streamlit 핫리로드** — `watchdog`로 코드 편집 시 `rag/` 하위 모듈까지 안정적으로 재로딩.
 - **데이터 공개** — `index/`(보고서 본문 포함)는 배포를 위해 git에 커밋됩니다(데이터 소유자 공개 결정).
   `.env`(API 키)·`reports_upload/`(원본)·eval 캐시는 git에서 제외됩니다.
