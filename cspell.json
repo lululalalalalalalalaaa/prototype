@@ -59,6 +59,7 @@
     "pythonpath",
     "pyyaml",
     "rerank",
+    "reranker",
     "rrf",
     "savez",
     "segs",
