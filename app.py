@@ -176,7 +176,11 @@ def render_search_result(result):
         evidence = (result.get("evidence") or {}).get(rec_name)
         if evidence and evidence.get("text"):
             st.markdown("**■ 근거 (출처 본문 발췌)**")
-            st.caption(f"추천 DB 보고서에서 검색어와 가장 일치하는 구절 · 코사인 {evidence['score']}")
+            loc = ""
+            if evidence.get("n_chunks"):
+                loc = (f"본문 {evidence['chunk_index']}/{evidence['n_chunks']}번째 청크"
+                       f"(약 {evidence['position_pct']}% 지점) · ")
+            st.caption(f"추천 DB 보고서에서 검색어와 가장 일치하는 구절 · {loc}코사인 {evidence['score']}")
             snippet = evidence["text"].strip().replace("\n", " ")
             st.markdown(f"> {snippet[:300]}{'…' if len(snippet) > 300 else ''}")
 

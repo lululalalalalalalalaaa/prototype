@@ -1,7 +1,28 @@
 """검색 레이어 검증 — 코사인 유사도 값과 랭킹 정렬/필터/top_k."""
 import math
 
-from rag.retrieve import bm25_scores, cosine_similarity, hybrid_rank, rank, tokenize
+from rag.retrieve import (best_chunk, bm25_scores, cosine_similarity,
+                          hybrid_rank, rank, tokenize)
+
+
+def test_best_chunk_returns_position():
+    report = {"chunks": [
+        {"text": "c0", "embedding": [1.0, 0.0]},
+        {"text": "c1", "embedding": [0.0, 1.0]},
+        {"text": "c2", "embedding": [0.5, 0.5]},
+    ]}
+    out = best_chunk([0.0, 1.0], report)   # 질의 → c1(인덱스 1)이 최고
+    assert out["text"] == "c1"
+    assert out["chunk_index"] == 2          # 1-based
+    assert out["n_chunks"] == 3
+    assert out["position_pct"] == 33        # round(1/3*100)
+
+
+def test_best_chunk_no_chunks():
+    out = best_chunk([1.0, 0.0], {"chunks": []})
+    assert out["text"] is None
+    assert out["n_chunks"] == 0
+    assert out["chunk_index"] == 0
 
 
 def test_cosine_identical_is_one():

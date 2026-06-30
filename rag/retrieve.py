@@ -27,14 +27,20 @@ def cosine_similarity(a, b):
 def best_chunk(query_embedding, report):
     """문서에서 질의와 가장 잘 맞는 청크를 반환합니다(출처/근거 표시용).
 
-    반환: {"score": float, "text": str|None}. 청크의 text는 이름 prefix 없는 원문 발췌.
+    반환: {"score", "text", "chunk_index"(1-based), "n_chunks", "position_pct"}.
+    청크는 문서 순서대로라 chunk_index가 문서 내 위치(앞→뒤)를 나타낸다(HWP는 페이지 평탄화로
+    페이지 번호가 없어 청크 위치로 대체). text는 이름 prefix 없는 원문 발췌.
     """
-    sims = [(cosine_similarity(query_embedding, c["embedding"]), c.get("text"))
-            for c in report.get("chunks", []) if c.get("embedding")]
+    chunks = report.get("chunks", [])
+    n = len(chunks)
+    sims = [(cosine_similarity(query_embedding, c["embedding"]), i, c.get("text"))
+            for i, c in enumerate(chunks) if c.get("embedding")]
     if not sims:
-        return {"score": 0.0, "text": None}
-    score, text = max(sims, key=lambda x: x[0])
-    return {"score": round(score, 3), "text": text}
+        return {"score": 0.0, "text": None, "chunk_index": 0, "n_chunks": n, "position_pct": 0}
+    score, idx, text = max(sims, key=lambda x: x[0])
+    return {"score": round(score, 3), "text": text,
+            "chunk_index": idx + 1, "n_chunks": n,
+            "position_pct": round(idx / n * 100) if n else 0}
 
 
 def rank(query_embedding, reports, top_k=None):
