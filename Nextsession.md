@@ -6,7 +6,7 @@ RAG 코어 + 데이터 기반(추출·구조청킹·표·이미지) + 측정(105
 ## 현재 상태
 - 검색 품질(골든셋 105, k=5): Dense 0.811 → Hybrid 0.794 → **Rerank MRR 0.972**(hard 0.950).
 - 그라운딩: off-domain 기권 **1.000**, 응답 **0.989**, 과잉기권 0.011. 내용 질의 **12/12**.
-- 인덱스 37문서/912청크(본문452+표431+이미지29). public repo 커밋. **139 passed, CI(pytest+cspell) 그린**.
+- 인덱스 37문서/912청크(본문452+표431+이미지29). public repo 커밋. **141 passed, CI 그린, LICENSE(KEITI)·README 완료**.
 
 ---
 
@@ -21,6 +21,8 @@ RAG 코어 + 데이터 기반(추출·구조청킹·표·이미지) + 측정(105
 
 - **무엇**: repo 연결(BYOK — `OPENAI_API_KEY`를 secrets로). 재인덱싱은 로컬 `build_index.py` 후 `index/` 커밋·푸시.
 - **성공 기준**: 공개 URL에서 검색·추천·출처·세부정보 동작 + "빌드→커밋→배포" 런북 1장.
+- **남은 admin 작업**: repo `description`·`topics`는 소유자(admin) 권한 필요(현재 gh는 WRITE만) → GitHub 웹 About ⚙️에서 설정.
+  텍스트: desc="자연어로 국가 LCI DB를 출처와 함께 찾는 RAG 검색 — Streamlit·OpenAI", topics=rag/streamlit/openai/semantic-search/retrieval/lci/life-cycle-assessment/korean.
 
 ## 3. hard 질의  (헤드룸 거의 없음)
 
