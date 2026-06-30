@@ -142,7 +142,7 @@ uv run pytest          # 전체 (API 키 불필요 — mock 클라이언트)
 ## 프로젝트 구조
 
 ```
-config/rules.yaml        설정 단일 소스 (모델·임계치·청킹·RRF·rerank_pool)
+config/rules.yaml        설정 단일 소스 (모델·임계치·청킹·RRF·rerank_pool·rerank_snippet·image_common_max·prices)
 scripts/build_index.py   오프라인 인덱서 → index/ (증분)
 index/                   불변 아티팩트: docs.jsonl·chunks.jsonl·embeddings.npz (배포 위해 커밋)
 rag/
@@ -163,6 +163,8 @@ app.py                   얇은 Streamlit UI (읽기 전용) + 출처/토큰/로
 ## 기술 메모
 
 - **모델**: 추천·요약 `gpt-5.4-nano`, **이미지(공정흐름도) `gpt-5.4`**(nano는 한국어 다이어그램을 못 읽음), 임베딩 `text-embedding-3-small` (전부 `config/rules.yaml`).
+  (임베딩 large 3072d는 A/B에서 검색은 올랐으나 최종 추천 그라운딩이 0.989→0.956로 떨어져 미채택 — 측정 기반 결정.)
+- **설정 단일 소스** — 모델·임계치·**단가(prices)**·발췌길이·이미지 dedup 임계까지 전부 `config/rules.yaml`에서 제어(코드 하드코딩 금지). 프롬프트·정규식 같은 로직은 코드에 둔다.
 - **구조 인식 인제스션** — `clean_body_text`(폼 체크박스·수식 노이즈 제거) → `structure_chunks`(섹션·표 분리) → `images`(BinData 이미지를 흰배경 평탄화 후 vision 설명). 노이즈 −12%로 rerank 0.962→0.972.
 - **이미지 평탄화 필수** — 원본은 팔레트+투명 PNG라 그대로 보내면 vision이 '검은 이미지'로 받아 헛읽음. Pillow로 흰 배경 합성.
 - **순수 파이썬 BM25/코사인** — 검색 연산은 numpy 없이 손구현(규모가 커지면 numpy 벡터화 고려). numpy는 npz 저장에만 사용.
