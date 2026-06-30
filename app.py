@@ -190,15 +190,13 @@ def render_search_result(result):
         # 출처(provenance): 추천 DB의 보고서에서 질의와 가장 일치하는 근거 본문 발췌
         evidence = (result.get("evidence") or {}).get(rec_name)
         if evidence and evidence.get("text"):
-            st.markdown("**■ 근거 (출처 본문 발췌)**")
-            parts = []
-            if evidence.get("section"):
-                tag = "표" if evidence.get("kind") == "table" else "섹션"
-                parts.append(f"📑 {evidence['section']} ({tag})")
-            if evidence.get("n_chunks"):
-                parts.append(f"본문 {evidence['chunk_index']}/{evidence['n_chunks']}")
-            parts.append(f"코사인 {evidence['score']}")
-            st.caption("추천 DB 보고서에서 검색어와 가장 일치하는 구절 · " + " · ".join(parts))
+            st.markdown("**■ 근거 (출처)**")
+            kind = evidence.get("kind")
+            tag = {"table": "표", "image": "그림"}.get(kind, "섹션")
+            loc = f"📑 {evidence['section']} ({tag})" if evidence.get("section") else ""
+            pos = f"본문 {evidence['chunk_index']}/{evidence['n_chunks']}" if evidence.get("n_chunks") else ""
+            src = " · ".join(p for p in [loc, pos, f"코사인 {evidence['score']}"] if p)
+            st.caption(f"출처: 「{rec_name}」 보고서 · {src}")
             snippet = evidence["text"].strip().replace("\n", " ")
             st.markdown(f"> {snippet[:300]}{'…' if len(snippet) > 300 else ''}")
 

@@ -25,6 +25,26 @@ def test_best_chunk_no_chunks():
     assert out["chunk_index"] == 0
 
 
+def test_best_chunk_prefers_specific_over_boilerplate():
+    # 제품 개요(일반)가 최고 코사인이어도, margin 이내의 구체 섹션을 출처로 우선.
+    report = {"chunks": [
+        {"text": "overview", "embedding": [1.0, 0.0], "section": "제품 개요", "kind": "body"},
+        {"text": "impact", "embedding": [0.99, 0.14], "section": "영향평가 결과", "kind": "table"},
+    ]}
+    out = best_chunk([1.0, 0.0], report)
+    assert out["section"] == "영향평가 결과" and out["kind"] == "table"
+
+
+def test_best_chunk_keeps_boilerplate_if_no_close_specific():
+    # 구체 섹션이 margin 밖이면 최고 코사인(일반) 유지.
+    report = {"chunks": [
+        {"text": "overview", "embedding": [1.0, 0.0], "section": "제품 개요", "kind": "body"},
+        {"text": "far", "embedding": [0.0, 1.0], "section": "영향평가", "kind": "table"},
+    ]}
+    out = best_chunk([1.0, 0.0], report)
+    assert out["section"] == "제품 개요"
+
+
 def test_cosine_identical_is_one():
     assert cosine_similarity([1.0, 2.0, 3.0], [1.0, 2.0, 3.0]) == 1.0
 

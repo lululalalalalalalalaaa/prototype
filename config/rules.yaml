@@ -17,6 +17,7 @@ rag:
   rerank_pool: 15                            # LLM 리랭크에 넘길 hybrid 후보 수
   rerank_snippet: 120                        # 리랭커에 넘길 후보별 본문 발췌 길이(자)
   image_common_max: 3                        # 이미지 해시가 이 수 초과 문서에 공통이면 로고/템플릿으로 제외
+  provenance_margin: 0.08                     # 출처: 최고 코사인 이 차이 이내면 일반섹션 대신 구체 섹션 우선
   prices:                                    # 모델별 단가 USD per 1M tokens (실제 청구 단가로 조정)
     text-embedding-3-small: {input: 0.02, output: 0.0}
     text-embedding-3-large: {input: 0.13, output: 0.0}

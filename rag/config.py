@@ -39,6 +39,7 @@ class Settings:
     rerank_pool: int = 15
     rerank_snippet: int = 120
     image_common_max: int = 3
+    provenance_margin: float = 0.08
     prices: dict = field(default_factory=dict)
 
 
@@ -65,5 +66,6 @@ def get_settings() -> Settings:
         rerank_pool=rag["rerank_pool"],
         rerank_snippet=rag["rerank_snippet"],
         image_common_max=rag["image_common_max"],
+        provenance_margin=rag["provenance_margin"],
         prices=rag["prices"],
     )

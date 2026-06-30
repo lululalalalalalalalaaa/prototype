@@ -13,6 +13,11 @@ from rag.config import get_settings
 _HANGUL_RUN = re.compile(r"[가-힣]+")
 _ALNUM_RUN = re.compile(r"[a-z0-9]+")
 
+# 모든 보고서에 공통으로 들어가는 템플릿 섹션(내용이 일반적이라 출처로 덜 유용).
+# 출처는 이보다 구체적인 섹션(기능단위·시스템경계·영향평가·공정흐름도)을 우선한다.
+_BOILERPLATE_SECTIONS = ("제품 개요", "모듈 개요", "가정 및 제한사항", "데이터 품질",
+                         "데이터 범주", "제외기준", "데이터 수집 및 계산")
+
 
 def cosine_similarity(a, b):
     """두 벡터의 코사인 유사도(-1~1)를 계산합니다."""
@@ -38,7 +43,15 @@ def best_chunk(query_embedding, report):
     if not sims:
         return {"score": 0.0, "text": None, "chunk_index": 0, "n_chunks": n,
                 "position_pct": 0, "section": "", "kind": ""}
-    score, idx, c = max(sims, key=lambda x: x[0])
+    sims.sort(key=lambda x: -x[0])
+    top = sims[0][0]
+    # 최고 코사인에 근접(provenance_margin 이내)한 청크 중, 일반 템플릿 섹션이 아닌
+    # 구체 섹션을 출처로 우선한다(없으면 최고 코사인 청크). 표시 점수는 선택 청크의 실제 코사인.
+    margin = get_settings().provenance_margin
+    near = [t for t in sims if t[0] >= top - margin]
+    specific = [t for t in near
+                if not any(b in (t[2].get("section") or "") for b in _BOILERPLATE_SECTIONS)]
+    score, idx, c = specific[0] if specific else sims[0]
     return {"score": round(score, 3), "text": c.get("text"),
             "chunk_index": idx + 1, "n_chunks": n,
             "position_pct": round(idx / n * 100) if n else 0,
