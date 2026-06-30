@@ -31,7 +31,15 @@
 | 21 | Stage 6로 끝? UI에 반영 맞나? | **코드로 UI 검증**: 앱은 `pipeline.search`로 full 파이프라인(hybrid→rerank→recommend) 실행, Stage 4·5·6 모두 반영. 시스템 **PoC-complete** 결론 | grep 검증 |
 | 22 | index/가 GitHub에 커밋돼야 하나? | 맞음 — gitignore면 배포 시 빈 인덱스. index/는 보고서 본문 포함 → **private repo에 커밋**(gitignore 해제). public이면 별도 업로드 필요 | — |
 | 23 | 골든셋 대규모화 | 46→**93문항**(난이도·OR/AND 태그, 근거화, near-domain no_match). `run_eval` 난이도별 분해 + any/all 채점. 헤드룸 확보 | dense 0.821 / hybrid 0.825 / **rerank 0.962**(hard 0.925). **BM25 이득 미미 발견** |
-| 24 | logging.md·Nextsession.md 갱신 | (이 작업) | — |
+| 24 | logging.md·Nextsession.md 갱신 | 문서 작성 | — |
+| 25 | 의도했으나 구현 안 된 것? | eval 채점 헬퍼(`recall_at_k` any/all·`reciprocal_rank`) 추출 + 단위 테스트(계획에 적고 누락했던 항목). answer 난이도별 집계 | 114 passed, dense 0.821 불변(behavior-preserving) |
+| 26 | #1 그라운딩 강화 + #2 BM25 재검토 모두 | **BM25 ablation**(`--pool dense`): rerank가 dense풀 vs hybrid풀 **둘 다 0.962**(net-neutral, hard +0.025/medium −0.014) → 유지. **그라운딩 강화**: recommend 프롬프트에 near-domain 거부 규칙 | near-domain 기권 0.867 → **1.000**, 응답 0.974·과잉기권 0.013(hard 1건) |
+| 27 | 서버 켰을 때 각 과정 로깅 확인되나? | 당시 로깅 0% → **관측성 구현**: `pipeline.search`에 단계별 `trace`(타이밍) + `rag.pipeline` 콘솔 로깅 + 인앱 `🔍` 패널(리랭크 전/후 포함) | 라이브 검증, 앱 0 traceback |
+| 28 | konetic-report-rag 참고 | 형제 프로젝트(같은 스택). 그들의 출처·토큰을 도입; 우리는 **eval·HWP로 앞섬**, Chroma/pkl은 과설계라 미도입 | — |
+| 29 | 토큰·출처 엄밀히 됐나? | **출처(provenance)**: `best_chunk` 근거 청크 인용. **토큰/비용**: `UsageTracker`가 단계별 토큰·USD 집계. 화면·trace·로그 노출 | 121 passed, 라이브 토큰 17.5K·$0.001·출처 캡처 |
+| 30 | placeholder가 no_match로 뜸 | 입력 예시가 철강(데이터에 없음)이라 오해 유발 → 검색되는 예시로 교정 | — |
+| 31 | 커밋 푸시 | 데이터 소유자 **공개 결정**(본문 "공개 불가" 표기는 3회 고지) → `main` 직접 커밋·푸시, `index/` 포함, `.env` 제외 | 121 passed, `cb61926` 푸시 |
+| 32 | 문서 동기화 점검 | (이 작업) README·CLAUDE·logging·Nextsession의 drift 수정(골든셋 93·출처·토큰·로깅·numpy·index 공개) | — |
 
 ## 누적 결과 요약
 
@@ -40,12 +48,11 @@
   - **확장 골든셋(93, k=5, 더 엄밀)**: Dense 0.821 → Hybrid 0.825 → **Rerank 0.962**.
     난이도별 rerank: easy 1.000 / medium 0.958 / **hard 0.925**(헤드룸 존재).
   - **발견**: 현실적 질의에선 **BM25(하이브리드) 이득이 미미**(0.821→0.825) — 리랭커가 대부분 흡수.
-- **그라운딩**(전체 파이프라인):
-  - 46세트(far-domain): off-domain 기권 **1.000**, 응답 정확도 0.974, 과잉기권 0.
-  - 93세트(near-domain 포함): 응답 정확도 **0.974**(hard 0.950), 과잉기권 0, **off-domain 기권 0.867**
-    (지하철·수소차 등 near-domain 2건 오추천 → 강화 여지, Nextsession #2).
-- **인덱스**: 37 문서 / 745 청크 / 메타데이터 37. 빌드 증분. **private repo에 커밋(배포용)**.
-- **테스트**: 104 passed (전부 API 키 불필요, mock). cspell 0 이슈.
+- **그라운딩**(전체 파이프라인, 93세트, recommend 프롬프트 강화 후): off-domain 기권 **1.000**(15/15),
+  응답 정확도 **0.974**(hard 0.950), 과잉기권 0.013. (강화 전 near-domain 0.867 → 강화 후 1.000)
+- **관측성·출처·비용**: 검색당 단계별 trace(타이밍·토큰·USD), 추천 근거 청크(출처) 인용, 서버 콘솔 + 인앱 패널.
+- **인덱스**: 37 문서 / 745 청크 / 메타데이터 37. 빌드 증분. **public repo에 커밋·푸시(`cb61926`)**.
+- **테스트**: 121 passed (전부 API 키 불필요, mock). cspell 0 이슈.
 - **부수 정리**: NFD 파일명 버그 수정, `.env` 우선순위, cspell 사전, main.py/lci_reports.json/ingest.pipeline 제거.
 
 ## 반복적으로 작동한 패턴

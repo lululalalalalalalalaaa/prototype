@@ -12,22 +12,25 @@
 
 ## 핵심 특징
 
-- **검색 품질을 수치로 검증** — 골든셋 + `eval/run_eval.py`로 각 단계의 기여를 측정(아래 표).
+- **검색 품질을 수치로 검증** — 골든셋(93문항) + `eval/run_eval.py`로 각 단계의 기여를 측정(아래 표).
 - **하이브리드 + 리랭커** — Dense(임베딩) + BM25(정확 토큰)를 RRF로 융합하고, LLM이 관련도로 재정렬.
+- **출처(provenance) + 토큰/비용 계측** — 추천 근거가 된 본문 청크를 인용 표시하고, 검색당 단계별 토큰·USD 비용을 집계.
+- **단계별 로깅(관측성)** — 검색마다 임베딩→하이브리드→리랭커→추천의 입출력·타이밍을 서버 콘솔 + 인앱 패널에 노출.
 - **build/serve 분리** — 임베딩 비용은 오프라인 빌드 1회. 서빙은 읽기 전용 → 동시성 안전.
-- **의존성 최소** — 순수 파이썬 BM25/코사인(외부 벡터DB·torch 없음). Python 3.14 + numpy/openai/streamlit.
+- **의존성 최소** — BM25·코사인은 순수 파이썬(외부 벡터DB·torch 없음). Python 3.14 + numpy(저장)/openai/streamlit.
 - **그라운딩** — 데이터에 없는 주제(철강·항공 등)는 LLM이 "적합 DB 없음"으로 올바르게 기권.
 
-## 검색 품질 (보강 골든셋 46문항, k=5)
+## 검색 품질 (골든셋 93문항, k=5)
 
 | 단계 | Recall@5 | MRR | 비고 |
 |---|---|---|---|
-| Dense (임베딩만) | 0.961 | 0.890 | 청크-max 코사인 |
-| + BM25 하이브리드(RRF) | 0.974 | 0.906 | 정확 토큰(경남·수도권) 보강 |
-| **+ LLM 리랭커** | **1.000** | **0.987** | 의미·동의어(전라남도=전남) 해결 |
+| Dense (임베딩만) | 0.923 | 0.821 | 청크-max 코사인 |
+| + BM25 하이브리드(RRF) | 0.949 | 0.825 | 정확 토큰(경남·수도권) 보강(현실 질의엔 효과 작음) |
+| **+ LLM 리랭커** | **0.987** | **0.962** | 의미·동의어(전라남도=전남) 해결 |
 
-추가로 **그라운딩**(전체 파이프라인 실측): off-domain 8문항 기권 정확도 **1.000**,
-답 있는 38문항 응답 정확도 **0.974**(과잉기권 0).
+난이도별 rerank MRR: easy 1.000 / medium 0.958 / **hard 0.925**(헤드룸 존재).
+추가로 **그라운딩**(전체 파이프라인 실측): off-domain 15문항 기권 정확도 **1.000**,
+답 있는 78문항 응답 정확도 **0.974**(과잉기권 0).
 
 ---
 
@@ -61,18 +64,19 @@ flowchart TD
   H --> P["top-15 후보 pool"]
   P --> R["③ LLM 리랭커<br/>관련도 재정렬 → top-5"]
   R --> G["④ LLM recommend<br/>추천 1개 + 다른 후보 + no_match"]
-  G --> O["추천 결과 + 세부정보(precompute)"]
+  G --> O["추천 결과 + 출처 인용 + 토큰/비용/타이밍 trace"]
 ```
 
-검색 1회당 OpenAI 호출 3회(임베딩 → 리랭커 → 추천). 세부정보는 빌드 시점에 미리 계산되어
-모달은 즉시 표시됩니다.
+검색 1회당 OpenAI 호출 3회(임베딩 → 리랭커 → 추천). 각 검색은 추천 근거 청크(출처)·단계별
+토큰/비용·타이밍을 `trace`에 담아 인앱 `🔍 검색 과정 로깅` 패널과 서버 콘솔에 표시합니다.
+세부정보는 빌드 시점에 미리 계산되어 모달은 즉시 표시됩니다.
 
 ## 단계별 품질 사다리
 
 ```mermaid
 flowchart LR
-  D["Dense<br/>MRR 0.890"] --> Hy["+ BM25 하이브리드<br/>MRR 0.906"]
-  Hy --> Re["+ LLM 리랭커<br/>MRR 0.987"]
+  D["Dense<br/>MRR 0.821"] --> Hy["+ BM25 하이브리드<br/>MRR 0.825"]
+  Hy --> Re["+ LLM 리랭커<br/>MRR 0.962"]
 ```
 
 각 단계는 같은 골든셋으로 before/after를 측정해 기여를 증명했습니다(`eval/run_eval.py --mode dense|hybrid|rerank`).
@@ -123,23 +127,25 @@ uv run pytest          # 전체 (API 키 불필요 — mock 클라이언트)
 ```
 config/rules.yaml        설정 단일 소스 (모델·임계치·청킹·RRF·rerank_pool)
 scripts/build_index.py   오프라인 인덱서 → index/ (증분)
-index/                   불변 아티팩트 (gitignore): docs.jsonl·chunks.jsonl·embeddings.npz
+index/                   불변 아티팩트: docs.jsonl·chunks.jsonl·embeddings.npz (배포 위해 커밋)
 rag/
   config·clients         설정 로더 / OpenAI 클라이언트 단일 생성 지점
   ingest/loaders·chunk   파일 파싱(HWP 포함) / 문단 토큰 윈도우 청킹
   embed·store            임베딩 / 인덱스 아티팩트 저장·로드
-  retrieve               코사인 + BM25(순수 파이썬) + hybrid_rank(RRF)
+  retrieve               코사인 + BM25(순수 파이썬) + hybrid_rank(RRF) + best_chunk(출처)
   rerank·generate        LLM 리랭커 / 추천·세부정보
-  pipeline               search() = hybrid → rerank → recommend
+  usage                  토큰/비용 계측(UsageTracker, 모델별 단가)
+  pipeline               search() = hybrid → rerank → recommend + trace(출처·토큰·타이밍)
 eval/                    golden.jsonl + run_eval.py (dense|hybrid|rerank|answer)
 tests/                   단계별 단위 테스트
-app.py                   얇은 Streamlit UI (읽기 전용)
+app.py                   얇은 Streamlit UI (읽기 전용) + 출처/토큰/로깅 표시
 ```
 
 ## 기술 메모
 
 - **모델**: 추천·요약 `gpt-5.4-nano`, 임베딩 `text-embedding-3-small` (둘 다 `config/rules.yaml`).
-- **순수 파이썬 BM25/코사인** — 외부 벡터DB·numpy 연산 의존 없이 손구현(규모가 커지면 numpy 벡터화 고려).
+- **순수 파이썬 BM25/코사인** — 검색 연산은 numpy 없이 손구현(규모가 커지면 numpy 벡터화 고려). numpy는 npz 저장에만 사용.
 - **한글 BM25 토크나이저** — 음절 bigram(예: '경남'↔'경남권')+영숫자 토큰(MDF·LPG). 형태소 분석기 불필요.
 - **macOS HWP 파일명**은 NFD라 NFC 정규화 후 처리(`clean_db_name`).
-- **비공개 데이터** — `reports_upload/`·`index/`·`lci_reports.json`은 git에 올라가지 않습니다.
+- **데이터 공개** — `index/`(보고서 본문 포함)는 배포를 위해 git에 커밋됩니다(데이터 소유자 공개 결정).
+  `.env`(API 키)·`reports_upload/`(원본)·eval 캐시는 git에서 제외됩니다.
